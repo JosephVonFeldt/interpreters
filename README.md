@@ -5,3 +5,4 @@
     - JLox
         - JLox Scanner is complete
         - CFG Stuff
+        - Basic Parser implemented
