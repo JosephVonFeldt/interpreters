@@ -18,6 +18,7 @@ public class Lox {
         } else if (args.length == 1) {
             runFile(args[0]);
         } else {
+            //runFile("./src/main/java/com/craftinginterpreters/Lox/text");
             runPrompt();
         }
     }
@@ -51,12 +52,12 @@ public class Lox {
         List<Token> tokens = scanner.scanTokens();
 
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements  = parser.parse();
 
         // Stop if there was a syntax error.
         if (hadError) return;
 
-        interpreter.interpret(expression);
+        interpreter.interpret(statements);
     }
     static void error(int line, String message) {
         report(line, "", message);
