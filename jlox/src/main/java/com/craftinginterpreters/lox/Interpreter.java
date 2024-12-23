@@ -3,6 +3,13 @@ package com.craftinginterpreters.lox;
 import java.util.List;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+    private Environment env = new Environment();
+
+    @Override
+    public Void visitBlockStmt(Stmt.Block stmt) {
+        executeBlock(stmt.statements, new Environment(env));
+        return null;
+    }
 
     @Override
     public Void visitPrintStmt(Stmt.Print stmt) {
@@ -14,6 +21,16 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
         evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitVarStmt(Stmt.Var stmt) {
+        Object value = null;
+        if (stmt.initializer != null) {
+            value = evaluate(stmt.initializer);
+        }
+        env.define(stmt.name.lexeme, value);
         return null;
     }
 
@@ -89,6 +106,19 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         //return null;
     }
 
+    @Override
+    public Object visitVariableExpr(Expr.Variable variable){
+        Object val = env.get(variable.name);
+        return val;
+    }
+
+    @Override
+    public Object visitAssignExpr(Expr.Assign expr) {
+        Object value = evaluate(expr.value);
+        env.assign(expr.name, value);
+        return value;
+    }
+
     void interpret(List<Stmt> statements) {
         try {
             for (Stmt statement : statements) {
@@ -104,6 +134,19 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
     private void execute(Stmt stmt) {
         stmt.accept(this);
+    }
+    void executeBlock(List<Stmt> statements,
+                      Environment environment) {
+        Environment previous = this.env;
+        try {
+            this.env = environment;
+
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } finally {
+            this.env = previous;
+        }
     }
 
     private boolean isTruthy(Object object) {

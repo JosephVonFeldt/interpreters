@@ -18,7 +18,7 @@ public class Lox {
         } else if (args.length == 1) {
             runFile(args[0]);
         } else {
-            //runFile("./src/main/java/com/craftinginterpreters/Lox/text");
+            runFile("./src/main/java/com/craftinginterpreters/Lox/text");
             runPrompt();
         }
     }
