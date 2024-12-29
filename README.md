@@ -8,3 +8,4 @@
         - Simple JLox Parser implemented
         - Simple JLox Interpreter implemented 
         - Variable support and basic control flow implemented
+        - We have fun(ctions)
